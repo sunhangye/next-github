@@ -1,4 +1,4 @@
-import { Button, Layout, Icon, Input } from 'antd'
+import { Button, Layout, Icon, Input, Avatar } from 'antd'
 import {useState, useCallback} from 'react'
 import Link from 'next/link'
 const { Header, Content, Footer } = Layout
@@ -14,7 +14,7 @@ export default ({ children }) => {
   return (
     <Layout>
       <Header>
-        <CenterContainer>
+        <CenterContainer renderer={<div className="header-inner" />}>
           <div className="header-left">
             <div className="logo">
               <Link href="/">
@@ -30,13 +30,20 @@ export default ({ children }) => {
               />
             </div>
           </div>
+          <div className="header-right">
+            <div className="user">
+              <a href="">
+                <Avatar size={40} icon="user" />
+              </a>
+            </div>
+          </div>
         </CenterContainer>
       </Header>
       <Content>
         {children}
       </Content>
-      <Footer>
-        Develop Training
+      <Footer className="footer">
+        Develop Github
       </Footer>
       <style jsx global>{`
         #__next {
@@ -51,9 +58,12 @@ export default ({ children }) => {
         }
       `}</style>
       <style jsx>{`
+        :global(.flex-box) {
+          display: flex;
+        }
         .header-inner {
           display: flex;
-          justify-content: spance-between;
+          justify-content: space-between;
         }
         .header-left {
           display: flex;
@@ -66,6 +76,10 @@ export default ({ children }) => {
           color: #fff;
           font-size: 40px;
         }
+        :global(.footer) {
+          text-align: center;
+        }
+        
       `}</style>
     </Layout>
   )
