@@ -27,7 +27,7 @@ const auth = (server) => {
 
       if (result.status === 200 && result.data && !result.data.error) {
         ctx.session.githubAuth = result.data
-        console.log(result);
+
         const { token_type, access_token } = result.data
 
         const userInfoResp = await axios({
@@ -37,10 +37,10 @@ const auth = (server) => {
             Authorization: `${token_type} ${access_token}`
           }
         })
-        console.log(userInfoResp.data)
-        
+
         ctx.session.userInfo = userInfoResp.data
-        ctx.redirect('/')
+        ctx.redirect((ctx.session && ctx.session.urlBeForeAOuth) || '/')
+        ctx.session.urlBeForeAOuth = ''
       } else {
         ctx.body = `request token failed ${result.message}`
       }
@@ -48,6 +48,26 @@ const auth = (server) => {
       await next()
     }
   })
+
+  server.use(async (ctx, next) => {
+    if (ctx.path === '/user/logout' && ctx.method === 'POST') {
+      ctx.session = null
+      ctx.body = 'logout sussess'
+    } else {
+      await next()
+    }
+  })
+
+  server.use(async (ctx, next) => {
+    if (ctx.path === '/prepare-auth' && ctx.method === 'GET') {
+      const { url } = ctx.query
+      ctx.session.urlBeForeAOuth = url
+      ctx.redirect(config.OAUTH_URL)
+    } else {
+      await next()
+    }
+  })
+  
 }
 
 module.exports = auth

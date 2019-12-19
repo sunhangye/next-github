@@ -1,15 +1,29 @@
-import { Button, Layout, Icon, Input, Avatar } from 'antd'
+import { Button, Layout, Icon, Input, Avatar, Tooltip, Dropdown, Menu, } from 'antd'
 import {useState, useCallback} from 'react'
+import { connect } from 'react-redux'
 import Link from 'next/link'
+import { withRouter } from 'next/router';
 const { Header, Content, Footer } = Layout
 
 import CenterContainer from './CenterContainer'
 
-export default ({ children }) => {
+import { OAUTH_URL } from '../config'
+
+import { logout } from '../store/store';
+
+const AppLayout = ({ children, user, logout, router }) => {
   const [search, setSearch] = useState('')
   const handleSearchChange = useCallback((event) => {
     setSearch(event.target.value)
   }, [search])
+  const handleLogout = useCallback(() => logout(), [logout])
+  const UserDropDown = (
+    <Menu>
+      <Menu.Item>
+        <Button type="link" onClick={handleLogout}>登出</Button>
+      </Menu.Item>
+    </Menu>
+  )
 
   return (
     <Layout>
@@ -32,9 +46,21 @@ export default ({ children }) => {
           </div>
           <div className="header-right">
             <div className="user">
-              <a href="">
-                <Avatar size={40} icon="user" />
-              </a>
+              {
+                user.id ? (
+                  <Dropdown overlay={UserDropDown} placement="bottomCenter">
+                    <a href={user.html_url} target="_blank">
+                      <Avatar size={40} src={user.avatar_url} />
+                    </a>
+                  </Dropdown>
+                ) : (
+                    <Tooltip placement="bottom" title="点击进行登录">
+                      <a href={`/prepare-auth?url=${router.asPath}`}>
+                        <Avatar size={40} icon="user" />
+                      </a>
+                    </Tooltip>
+                )
+              }
             </div>
           </div>
         </CenterContainer>
@@ -84,3 +110,12 @@ export default ({ children }) => {
     </Layout>
   )
 }
+const mapStateToProps = (state) => ({
+  user: state.user
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  logout: () => dispatch(logout())
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AppLayout))

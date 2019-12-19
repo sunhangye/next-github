@@ -67,7 +67,7 @@ const Home = ({count, username}) => {
     <Button type="danger" onClick={goB}>跳转到B</Button>
     <Head>
       <title>Home</title>
-      {/* <link rel="icon" href="/favicon.ico" /> */}
+      <link rel="icon" href="/public/favicon.ico" />
     </Head>
 
     <Nav />
