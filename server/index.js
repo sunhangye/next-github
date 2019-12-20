@@ -11,6 +11,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 const auth = require('./auth')
+const api = require('./api')
 
 // const redis = new Redis()
 
@@ -23,9 +24,6 @@ app.prepare().then(() => {
    * 之所以要传递 ctx.req和ctx.res， 是因为 next 并不只是兼容 koa 这个框架， 所以需要传递 node 原生提供的 req 和 res
    */
 
-  server.use(async (ctx, next) => {
-    await next()
-  })
 
   server.keys = ['51cto Develop Training App']
 
@@ -37,7 +35,7 @@ app.prepare().then(() => {
   server.use(session(SESSION_CONFIG, server))
 
   auth(server)
-
+  api(server)
   router.get('/a/:id', async ctx => {
     const id = ctx.params.id
     await handle(ctx.req, ctx.res, {

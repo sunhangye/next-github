@@ -2,7 +2,7 @@ import { Button, Layout, Icon, Input, Avatar, Tooltip, Dropdown, Menu, } from 'a
 import {useState, useCallback} from 'react'
 import { connect } from 'react-redux'
 import Link from 'next/link'
-import { withRouter } from 'next/router';
+import Router, { withRouter } from 'next/router';
 const { Header, Content, Footer } = Layout
 
 import CenterContainer from './CenterContainer'
@@ -12,10 +12,19 @@ import { OAUTH_URL } from '../config'
 import { logout } from '../store/store';
 
 const AppLayout = ({ children, user, logout, router }) => {
-  const [search, setSearch] = useState('')
+  // 取router query保存到state
+  const searchUrlQuery = router.query && router.query.query
+
+  const [search, setSearch] = useState(searchUrlQuery || '')
+
   const handleSearchChange = useCallback((event) => {
     setSearch(event.target.value)
+  }, [setSearch])
+
+  const handleOnSearch = useCallback(() => {
+    Router.push(`/search?query=${search}`)
   }, [search])
+
   const handleLogout = useCallback(() => logout(), [logout])
   const UserDropDown = (
     <Menu>
@@ -41,6 +50,8 @@ const AppLayout = ({ children, user, logout, router }) => {
               <Input.Search
                 placeholder="搜索仓库"
                 onChange={handleSearchChange}
+                onSearch={handleOnSearch}
+                value={search}
               />
             </div>
           </div>
@@ -76,11 +87,14 @@ const AppLayout = ({ children, user, logout, router }) => {
           height: 100%;
         }
         .ant-layout {
-          height: 100%;
+          min-height: 100%;
         }
         .ant-layout-header{
           padding-left: 0;
           padding-right: 0;
+        }
+        .ant-layout-content{
+          background: #fff;
         }
       `}</style>
       <style jsx>{`

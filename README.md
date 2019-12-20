@@ -1731,3 +1731,6 @@ WithReduxApp.getInitialProps = async (ctx) => {
 ```
 
 ### Hooks 让函数组件具有类组件的能力
+
+request({method, url, data={}}, req, res)
+method, url, data, headers
