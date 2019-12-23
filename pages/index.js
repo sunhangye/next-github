@@ -1,9 +1,12 @@
+import { useEffect } from 'react'
 import Link from 'next/link';
 import { Button } from 'antd'
 import Router from 'next/router'
 import axios from 'axios'
-import api from '../lib/api'
+import { request } from '../lib/api'
 function Index() {
+
+
   const goDetail = () => {
     Router.push('/detail')
   }
@@ -14,19 +17,19 @@ function Index() {
     </>
   )
 }
-Index.getInitialProps = async ({ctx}) => {
-  // const result = await axios.get('/github/search/repositories?q=react')
+Index.getInitialProps = async ({ ctx }) => {
+  // const result = await request(
+  //   {
+  //     url: '/search/repositories?q=react',
+  //   },
+  //   ctx.req,
+  //   ctx.res
+  //   )
+
   // return {
   //   data: result.data
   // }
-  const result = await api.requestGithhub({
-    'GET',
-    '/search/repositories?q=react',
-    {}
-  }, ctx.req, ctx.res)
-  return {
-    data: result.data
-  }
+  
 }
 
 export default Index

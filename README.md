@@ -1732,5 +1732,9 @@ WithReduxApp.getInitialProps = async (ctx) => {
 
 ### Hooks 让函数组件具有类组件的能力
 
-request({method, url, data={}}, req, res)
-method, url, data, headers
+### 使用koa-body处理post请求
+```server/index
+  const KoaBody = require('koa-body')
+  server.use(KoaBody())
+```
+然后我们就可以使用`ctx.request.body`获取到请求参数

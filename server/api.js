@@ -1,20 +1,20 @@
 const axios = require('axios')
+const { requestGithub } = require('../lib/api')
+
 const github_base_url = 'https://api.github.com'
+
 module.exports = (server) => {
   server.use(async (ctx, next) => {
-    const { path, url } = ctx
-    const proxyPrefix = '/github/'
-    
-  })
-  server.use(async (ctx, next) => {
 
-    const { path, url } = ctx
+    const { path, url, method } = ctx
     const proxyPrefix = '/github/'
 
     if (path.startsWith(proxyPrefix)) {
+      console.log(ctx.request.body)
+      
       const { githubAuth } = ctx.session
       const { access_token, token_type } = githubAuth || {}
-      const githubPath = `${github_base_url}${url.replace(proxyPrefix, '/')}`
+
       const headers = {}
 
       if (access_token) {
@@ -22,23 +22,19 @@ module.exports = (server) => {
       }
 
       try {
-        const result = await axios({
-          method: 'GET',
-          url: githubPath,
+        const result = await requestGithub(
+          method,
+          url.replace('/github/', '/'),
+          ctx.request.body || {},
           headers
-        })
-        if (result.status === 200) {
-          ctx.body = result.data
-        } else {
-          ctx.body = result.messge
-        }
-        ctx.set('Content-Type', 'application/json')
+        )
+        ctx.status = result.status
+        ctx.body = result.data
       } catch (error) {
         console.error(error)
-        ctx.body = {
-          message: error
-        }
+
       }
+
     } else {
       await next()
     }

@@ -5,13 +5,16 @@ const session = require('koa-session')
 
 const RedisSessionStore = require('./session-store')
 const Redis = require('ioredis')
+const KoaBody = require('koa-body')
+const auth = require('./auth')
+const api = require('./api')
 
 const PORT = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
-const auth = require('./auth')
-const api = require('./api')
+
+
 
 // const redis = new Redis()
 
@@ -26,14 +29,14 @@ app.prepare().then(() => {
 
 
   server.keys = ['51cto Develop Training App']
-
+  server.use(KoaBody())
   const SESSION_CONFIG = {
     key: 'jid',
     // store: new RedisSessionStore(redis)
   }
 
   server.use(session(SESSION_CONFIG, server))
-
+  
   auth(server)
   api(server)
   router.get('/a/:id', async ctx => {
