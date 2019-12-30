@@ -5,6 +5,7 @@ const { request_token_url, client_secret, client_id } = config.github
 
 const auth = (server) => {
   server.use(async (ctx, next) => {
+    // 在git配置的回调地址
     if (ctx.path === '/auth') {
       const code = ctx.query.code
       if (!code) {

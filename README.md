@@ -1738,3 +1738,12 @@ WithReduxApp.getInitialProps = async (ctx) => {
   server.use(KoaBody())
 ```
 然后我们就可以使用`ctx.request.body`获取到请求参数
+
+### 缓存数据
+```
+let cacheUserRepo;
+Index.getInitialProps = () => {
+  ...
+  cacheUserRepo = userRepo
+}
+```

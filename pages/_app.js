@@ -54,19 +54,14 @@ class MyApp extends App {
   
   render() {
     const { Component, pageProps, reduxStore } = this.props
-    
+
     return (
       <Container>
         <Provider store={reduxStore}>
           {this.state.isLoading && <PageLoaing />}
           <Layout>
             <Component {...pageProps}/>
-
-                
-
           </Layout>
-          
-          
         </Provider>
       </Container>
     )

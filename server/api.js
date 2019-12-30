@@ -1,7 +1,7 @@
 const axios = require('axios')
 const { requestGithub } = require('../lib/api')
 
-const github_base_url = 'https://api.github.com'
+const GITHUB_BASE_URL = 'https://api.github.com'
 
 module.exports = (server) => {
   server.use(async (ctx, next) => {
@@ -10,11 +10,8 @@ module.exports = (server) => {
     const proxyPrefix = '/github/'
 
     if (path.startsWith(proxyPrefix)) {
-      console.log(ctx.request.body)
-      
       const { githubAuth } = ctx.session
       const { access_token, token_type } = githubAuth || {}
-
       const headers = {}
 
       if (access_token) {

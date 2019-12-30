@@ -20,6 +20,7 @@ const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize'
 const SCOPE = 'user'
 
 const github = {
+  // OAuth 登录链接
   request_token_url: 'https://github.com/login/oauth/access_token',
   client_id: '9b2f689f96a8f9f46a7f',
   client_secret: '7aba86eb6a7aadf33d378239a5c459df82357a93'
