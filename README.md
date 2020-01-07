@@ -1194,7 +1194,7 @@ https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
 
 #### 获取用户信息
 `https://api.github.com/user` 需要在header中添加Authorization字段，值为`token 请求到的token`。
-  
+
 
 ### 维持OAuth之前的页面访问地址
 
@@ -1747,3 +1747,54 @@ Index.getInitialProps = () => {
   cacheUserRepo = userRepo
 }
 ```
+
+### HOC 高阶组件注意事项
+
+```
+export default (Comp) => {
+  const Child = ({router, ...rest}) => {
+    return (
+      <>
+        <div>Header</div>
+        <div><Comp { ...rest } /></div>
+        <div>Footer</div>
+      </>
+    )
+  }
+  Child.getInitialProps = aysnc (context) => {
+    const { ctx, router } = context
+    // 调取公共数据方法
+    ...
+    // 注意事项
+    let compProps = {}
+    if (typeof Comp.getInitialProps === 'function') {
+      compProps = await Comp.getInitialProps(context)
+    }
+    return {
+      commonData,
+      ...compProps
+    }
+  }
+  return withRouter(Child)
+}
+```
+* 判断子组件有getInitialProps，有则将完整的context传参获取到的数据通过解构赋值到容器组件props
+* 将容器组件props数据传到<Comp {...rest}>
+
+### 处理详情页readme 
+1、base64_to_utf8
+  const content = decodeURLComponent(escape(atob(str)))
+2、处理markdown数据
+  ```
+  // 样式
+  import 'github-markdown-css'
+  import 'MarkdownIt' from 'markdown-it'
+  const md = new MarkdownIt({html: true, linkify: true})
+  const html md.render(content)
+  
+  <div className="markdown-body">
+    <div dangerouslySetInnerHtml={{_html: html}} />
+  </div>
+  ```
+  抽取markdown组件，使用memo如果props没变化则不重新渲染,使用useMemo(() => {}, [content])
+

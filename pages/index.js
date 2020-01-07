@@ -8,12 +8,9 @@ import getConfig from 'next/config'
 import { connect } from 'react-redux'
 import Repo from '../components/Repo'
 import LRU from 'lru-cache'
-
+import { setCacheArray } from '../lib/client-cache';
 const { publicRuntimeConfig } = getConfig()
 
-/**
- * 使用lru - cache 在浏览器渲染判断到有数据就放到cache中， 超过maxAge不调用则销毁重新请求。否则一直使用一直缓存
- */
 const cache = new LRU({
   maxAge: 1000 * 10
 })
@@ -28,8 +25,12 @@ function Index({ userRepos,userStaredRepos, user, router }) {
 
   useEffect(() => {
     if (!isServer) {
+      //缓存首页数据
       cache.set('userRepos', userRepos)
       cache.set('userStaredRepos', userStaredRepos)
+      //缓存详情页数据
+      setCacheArray(userRepos)
+      setCacheArray(userStaredRepos)
     }
   }, [userRepos, userStaredRepos])
   const tabKey = router.query.key || '1'

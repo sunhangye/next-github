@@ -13,11 +13,11 @@ const PORT = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
-
+const atob = require('atob')
 
 
 // const redis = new Redis()
-
+global.atob = atob
 app.prepare().then(() => {
   const server = new Koa()
   const router = new Router()

@@ -4,6 +4,7 @@ import { Row, Col, List, Pagination } from 'antd'
 import Link from 'next/link'
 import api from '../lib/api'
 import Repo from '../components/Repo'
+import { setCacheArray } from '../lib/client-cache'
 const LANGUAGES = ['JavaScript', 'HTML', 'CSS', 'TypeScript', 'Java', 'Vue', 'React']
 const SORT_TYPES = [{
     name: 'Best Match',
@@ -69,15 +70,20 @@ const FilterLink = memo(({name, query, sort, order, lang, page}) => {
   )
 })
 
-
+const isServer = typeof window === 'undefined'
 
 /**
- * 声明匿名函数每次都会被渲染
+ * 声明匿名函数每次都会被渲染，所以提取出来
  */
 function Search ({ router, repos }) {
 
   const { ...querys } = router.query
   const { sort, order, lang, query, page } = router.query
+
+  useEffect(() => {
+    setCacheArray(repos.items)
+  })
+
   const handleLanguageChange = (language) => {
     Router.push({
       pathname: '/search',
@@ -240,7 +246,7 @@ Search.getInitialProps = async ({ ctx }) => {
   ctx.req,
   ctx.res
   )
-  
+
   return {
     repos: result.data
   }

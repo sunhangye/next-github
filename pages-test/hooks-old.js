@@ -63,7 +63,9 @@ function MyCountFunc() {
    * 所以推荐只要外部用到的state或者func都要填到第二个参数[] dependency 从而从新执行useEffect
    */
 
-
+  /**
+   * useEffect只会在组件mount时执行 且useEffect的第二个参数是依赖的变量， 一旦这个依赖的变量变动， useEffect就会重新执行， 所以我们需要添加query为useEffect的依赖
+   */
   useEffect(() => {
     console.log(inputRef)
     console.log('effect invoked')
