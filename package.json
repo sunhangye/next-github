@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon server/index.js --watch server",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
     "@zeit/next-bundle-analyzer": "^0.1.2",
@@ -15,12 +16,14 @@
     "axios": "^0.19.0",
     "babel-plugin-import": "^1.13.0",
     "babel-plugin-styled-components": "^1.10.6",
+    "cross-env": "^6.0.3",
     "github-markdown-css": "^3.0.1",
     "ioredis": "^4.14.1",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
     "koa-router": "^7.4.0",
     "koa-session": "^5.12.3",
+    "lodash": "^4.17.15",
     "lru-cache": "^5.1.1",
     "markdown-it": "^10.0.0",
     "moment": "^2.24.0",

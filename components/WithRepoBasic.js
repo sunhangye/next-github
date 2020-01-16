@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { withRouter } from 'next/router'
 import api from '../lib/api'
 import { getClientCache, setClientCache } from '../lib/client-cache'
+
 /**
  * @param {*} queryObject: `owner=sunhangye&name=awesome-vue`
  * Object.entries: [['owner', 'sunhangye'], ['name', 'awesome-vue']]
@@ -47,7 +48,7 @@ export default (Comp, type = 'index') => {
             }
           </Link>
         </div>
-        <div><Comp { ...rest } /></div>
+        <div style={{padding: '0 20px'}}><Comp { ...rest} router={router} /></div>
         <style jsx>{`
           .root {
             padding-top: 20px;
@@ -55,8 +56,8 @@ export default (Comp, type = 'index') => {
           .repo-basic {
             padding: 20px;
             border: 1px solid #eee;
-            margin-bottom: 20px;
             border-radius: 5px;
+            margin-bottom: 20px;
           }
           .tab + .tab {
             margin-left: 20px;
@@ -74,8 +75,7 @@ export default (Comp, type = 'index') => {
     if (typeof Comp.getInitialProps === 'function') {
       compProps = await Comp.getInitialProps(context)
     }
-
-    debugger
+    
     const full_name = `${owner}/${name}`
 
 

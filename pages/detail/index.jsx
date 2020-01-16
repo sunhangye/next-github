@@ -1,13 +1,13 @@
 import WithRepoBasic from '../../components/WithRepoBasic'
+import dynamic from 'next/dynamic'
 import api from '../../lib/api'
-import MarkdownRender from '../../components/MarkdownRender'
-
+const MarkdownRender = dynamic(() => import('../../components/MarkdownRender'))
 
 function Detail({ readme }) {
 
 
   return (
-    <MarkdownRender content={readme.content} />
+    <MarkdownRender content={readme.content} isBase64={true} />
   )
 }
 Detail.getInitialProps = async ({ ctx: { query: { owner, name }, req, res }}) => {
