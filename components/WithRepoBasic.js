@@ -2,7 +2,8 @@ import Repo from './Repo'
 import Link from 'next/link'
 import { withRouter } from 'next/router'
 import api from '../lib/api'
-import { getClientCache, setClientCache } from '../lib/client-cache'
+import { genDetailCacheKey, genDetailCacheKeyStrate } from '../lib/util'
+import initCache from '../lib/client-cache-new'
 
 /**
  * @param {*} queryObject: `owner=sunhangye&name=awesome-vue`
@@ -18,11 +19,18 @@ function makeQuery(queryObject) {
     }, []).join('&')
   return query
 }
+
+const { cache, useCache } = initCache({
+  genCacheKeyStrate: genDetailCacheKeyStrate
+})
+
 const isServer = typeof window === 'undefined'
 
 export default (Comp, type = 'index') => {
   const WithDetail = ({ repoBasic, router, ...rest }) => {
     const query = makeQuery(router.query)
+
+    useCache(genDetailCacheKey(router), { repoBasic, router, ...rest })
 
     return (
       <div className="root">
@@ -66,7 +74,7 @@ export default (Comp, type = 'index') => {
       </div>
     )
   }
-  WithDetail.getInitialProps = async (context) => {
+  WithDetail.getInitialProps = cache(async (context) => {
     const { router, ctx } = context
     const { owner, name } = ctx.query
 
@@ -74,16 +82,6 @@ export default (Comp, type = 'index') => {
     let compProps = {}
     if (typeof Comp.getInitialProps === 'function') {
       compProps = await Comp.getInitialProps(context)
-    }
-    
-    const full_name = `${owner}/${name}`
-
-
-    if (getClientCache(full_name)) {
-      return {
-        repoBasic: getClientCache(full_name),
-        ...compProps
-      }
     }
 
     const {data: repoBasic} = await api.request({
@@ -94,8 +92,7 @@ export default (Comp, type = 'index') => {
       repoBasic,
       ...compProps
     }
-    if (isServer) setClientCache(repoBasic)
 
-  }
+  })
   return withRouter(WithDetail)
 }

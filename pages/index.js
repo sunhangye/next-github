@@ -7,32 +7,23 @@ import { request } from '../lib/api'
 import getConfig from 'next/config'
 import { connect } from 'react-redux'
 import Repo from '../components/Repo'
-import LRU from 'lru-cache'
-import { setCacheArray } from '../lib/client-cache';
 const { publicRuntimeConfig } = getConfig()
+import initCache from '../lib/client-cache-new'
 
-const cache = new LRU({
-  maxAge: 1000 * 10
-})
+const { cache, useCache, getCachedData } = initCache()
 
 /**
  * 服务端渲染后变量为公共变量，任何用户都会公用，所以要改成只有浏览器渲染才会缓存数据
  */
-let cacheUserRepos
-let cacheUserStaredRepos
+
 const isServer = typeof window === 'undefined'
 function Index({ userRepos,userStaredRepos, user, router }) {
 
-  useEffect(() => {
-    if (!isServer) {
-      //缓存首页数据
-      cache.set('userRepos', userRepos)
-      cache.set('userStaredRepos', userStaredRepos)
-      //缓存详情页数据
-      setCacheArray(userRepos)
-      setCacheArray(userStaredRepos)
-    }
-  }, [userRepos, userStaredRepos])
+  cache('cache', {
+    userRepos,
+    userStaredRepos
+  })
+
   const tabKey = router.query.key || '1'
   if (!user || !user.id) {
     return (
@@ -137,20 +128,13 @@ function Index({ userRepos,userStaredRepos, user, router }) {
     </div>
   )
 }
-Index.getInitialProps = async ({ ctx, reduxStore }) => {
+Index.getInitialProps = cache(async ({ ctx, reduxStore }) => {
 
   const { user } = reduxStore.getState()
   if (!user || !user.id) {
     return {}
   }
-  if (!isServer) {
-    if (cache.get('userRepos') && cache.get('userStaredRepos')) {
-      return {
-        userRepos: cache.get('userRepos'),
-        userStaredRepos: cache.get('userStaredRepos')
-      }
-    }
-  }
+  
 
   const { data: userRepos } = await request(
     {
@@ -172,7 +156,7 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
     userStaredRepos
   }
 
-}
+})
 
 const mapStateToProps = (state) => ({
   user: state.user

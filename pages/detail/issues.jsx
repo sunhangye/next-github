@@ -5,12 +5,22 @@ import { useState, useCallback, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { getTimeFromNow } from '../../lib/util'
 import SearchUser from '../../components/SearchUser'
+
+import { genDetailCacheKey, genDetailCacheKeyStrate } from '../../lib/util'
+
+import initCache from '../../lib/client-cache-new'
 const MdRenderer = dynamic(() => import('../../components/MarkdownRender'))
 
 const { Option } = Select
 
 // 缓存labels数据
 const CACHE = {}
+
+const { cache, useCache } = initCache({
+  genCacheKeyStrate: (context) => {
+    return genDetailCacheKeyStrate(context)
+  },
+})
 
 const isServer = typeof window === 'undefined'
 
@@ -126,7 +136,9 @@ function IssuesItem ({issue}) {
   )
 }
 
-function Issues({ initIssues, labels, router }) {
+function Issues({ services, router }) {
+  const { initIssues, labels } = services
+  useCache(genDetailCacheKey(router), { services })
   const { owner, name } = router.query
   // 创建者
   const [creator, setCreator] = useState('')
@@ -238,7 +250,7 @@ function Issues({ initIssues, labels, router }) {
   )
 }
 
-Issues.getInitialProps = async ({ ctx: { query: { owner, name }, req, res }}) => {
+Issues.getInitialProps = cache(async ({ ctx: { query: { owner, name }, req, res }}) => {
   const full_name = `${owner}/${name}`
   const [issuesResp, labelsResp] = await Promise.all([
     api.request({
@@ -251,11 +263,12 @@ Issues.getInitialProps = async ({ ctx: { query: { owner, name }, req, res }}) =>
   ])
 
   return {
-    initIssues: issuesResp.data,
-    labels: labelsResp.data,
-    owner,
-    name
+    services: {
+      initIssues: issuesResp.data,
+      labels: labelsResp.data,
+    }
+    
   }
-}
+})
 
 export default WithRepoBasic(Issues, 'issues')

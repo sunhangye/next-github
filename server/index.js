@@ -27,9 +27,10 @@ app.prepare().then(() => {
    * 之所以要传递 ctx.req和ctx.res， 是因为 next 并不只是兼容 koa 这个框架， 所以需要传递 node 原生提供的 req 和 res
    */
 
-
   server.keys = ['51cto Develop Training App']
+
   server.use(KoaBody())
+
   const SESSION_CONFIG = {
     key: 'jid',
     // store: new RedisSessionStore(redis)
@@ -38,7 +39,9 @@ app.prepare().then(() => {
   server.use(session(SESSION_CONFIG, server))
   
   auth(server)
+
   api(server)
+  
   router.get('/a/:id', async ctx => {
     const id = ctx.params.id
     await handle(ctx.req, ctx.res, {

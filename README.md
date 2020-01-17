@@ -12,6 +12,7 @@ Next.js 是一个轻量级的 React 服务端渲染应用框架。
 
 当使用 React 开发系统的时候，常常需要配置很多繁琐的参数，如 Webpack 配置、Router 配置和服务器配置等。如果需要做 SEO，要考虑的事情就更多了，怎么让服务端渲染和客户端渲染保持一致是一件很麻烦的事情，需要引入很多第三方库。针对这些问题，Next.js 提供了一个很好的解决方案，使开发人员可以将精力放在业务上，从繁琐的配置中解放出来。下面我们一起来从零开始搭建一个完善的 next 项目。
 
+
 ## 项目的初始化
 
 首先安装 create-next-app 脚手架
@@ -23,7 +24,7 @@ npm i -g create-next-app
 然后利用脚手架建立 next 项目
 
 ```
-create-next-app next-github
+npx create-next-app next-github
 cd next-github
 npm run dev
 ```
@@ -1145,6 +1146,8 @@ export default withRedux(MyApp)
 
 ## github Oauth 认证
 
+![流程图](https://wx1.sinaimg.cn/mw690/a9326b05ly1gazj3k4ml0j212a0lgjus.jpg)
+
 接下来接入 github 第三方登录
 
 ### 新建 github applications
@@ -1798,3 +1801,6 @@ export default (Comp) => {
   ```
   抽取markdown组件，使用memo如果props没变化则不重新渲染,使用useMemo(() => {}, [content])
 
+### 导出静态页面
+
+使用`npm run build`之后使用`npm run export`

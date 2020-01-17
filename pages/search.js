@@ -4,8 +4,11 @@ import { Row, Col, List, Pagination } from 'antd'
 import Link from 'next/link'
 import api from '../lib/api'
 import Repo from '../components/Repo'
-import { setCacheArray } from '../lib/client-cache'
+import iniCache from '../lib/client-cache-new'
+import { getCacheKeyByQuery } from '../lib/util'
+
 const LANGUAGES = ['JavaScript', 'HTML', 'CSS', 'TypeScript', 'Java', 'Vue', 'React']
+
 const SORT_TYPES = [{
     name: 'Best Match',
   },
@@ -72,17 +75,18 @@ const FilterLink = memo(({name, query, sort, order, lang, page}) => {
 
 const isServer = typeof window === 'undefined'
 
+const { cache, useCache } = iniCache({
+  genCacheKeyStrate: (context) => getCacheKeyByQuery(context)
+})
+
 /**
  * 声明匿名函数每次都会被渲染，所以提取出来
  */
 function Search ({ router, repos }) {
-
+  useCache(getCacheKeyByQuery(router), {repos})
   const { ...querys } = router.query
   const { sort, order, lang, query, page } = router.query
 
-  useEffect(() => {
-    setCacheArray(repos.items)
-  })
 
   const handleLanguageChange = (language) => {
     Router.push({
@@ -217,7 +221,7 @@ function Search ({ router, repos }) {
   )
 }
 
-Search.getInitialProps = async ({ ctx }) => {
+Search.getInitialProps = cache(async ({ ctx }) => {
   const { query, sort, lang, order, page } = ctx.query
   // ?q=react+language:javascript&sort=starts&order=desc&page=2
   if (!query) {
@@ -250,6 +254,6 @@ Search.getInitialProps = async ({ ctx }) => {
   return {
     repos: result.data
   }
-}
+})
 
 export default withRouter(Search)
