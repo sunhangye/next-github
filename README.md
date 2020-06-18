@@ -1,7 +1,6 @@
 ## 前言
 
-本文参考了慕课网 jokcy 老师的[React16.8+Next.js+Koa2 开发 Github 全栈项目](https://coding.imooc.com/class/334.html)，也算是做个笔记吧。
-
+本文参考了慕课网 jokcy 老师的[React16.8+Next.js+Koa2 开发 Github 全栈项目](https://coding.imooc.com/class/334.html)，记录以便后续学习。🙂
 
 ## 介绍
 
